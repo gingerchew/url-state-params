@@ -96,7 +96,6 @@ export class URLStateParams {
 
             if ('$t' in output && '$v' in output) {
                 output = this._parseStringToValue(output.$t, output.$v);
-                console.log({ output });
             }
         } catch (e) {
             output = str;
@@ -128,6 +127,9 @@ export class URLStateParams {
             this.#$.append(key, safe);
         }
     }
+    set(key: string, value: unknown) {
+        this.#$.set(key, this._safeValue(value));
+    }
     get = (
         key: string
     ) => this._parse(this.#$.get(key));
@@ -137,9 +139,6 @@ export class URLStateParams {
     getAll = (
         key: string
     ): any[] => this.#$.getAll(key).flatMap(value => this._parse(value))
-    set(key: string, value: unknown) {
-        this.#$.set(key, this._safeValue(value));
-    }
     sort() {
         this.#$.sort();
     }
@@ -178,21 +177,15 @@ export class URLStateParams {
         this.#$.has(key, this._safeValue(value)) :
         this.#$.has(key);
     *entries() {
-        for (const [key, value] of this.#$.entries()) {
-            yield [key, this._parse(value)]
-        }
+        for (const [key, value] of this.#$.entries()) yield [key, this._parse(value)]
     }
     *values() {
-        for (const value of this.#$.values()) {
-            yield this._parse(value);
-        }
+        for (const value of this.#$.values()) yield this._parse(value);
     }
     *keys() {
         for (const key of this.#$.keys()) yield key;
     }
     *[Symbol.iterator]() {
-        for (const entry of this.entries()) {
-            yield entry;
-        }
+        for (const [key, value] of this.entries()) yield [key, this._parse(value)]
     }
 }
